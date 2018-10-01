@@ -29,3 +29,53 @@ print ("Test dataset size is {}".format(len(test_data)))
 
 
 
+import spacy
+import string
+
+# Load English tokenizer, tagger, parser, NER and word vectors
+tokenizer = spacy.load('en_core_web_sm')
+punctuations = string.punctuation
+
+# lowercase and remove punctuation
+def tokenize(sent):
+    tokens = tokenizer(sent)
+    return [token.text.lower() for token in tokens if (token.text not in punctuations)]
+
+# Example
+tokens = tokenize(u'Apple is looking at buying U.K. startup for $1 billion')
+print (tokens)
+
+# This is the code cell that tokenizes train/val/test datasets
+# However it takes about 15-20 minutes to run it
+# For convinience we have provided the preprocessed datasets
+# Please see the next code cell
+import pickle as pkl
+
+def tokenize_dataset(dataset):
+    token_dataset = []
+    # we are keeping track of all tokens in dataset 
+    # in order to create vocabulary later
+    all_tokens = []
+    
+    for sample in dataset:
+        tokens = tokenize(sample)
+        token_dataset.append(tokens)
+        all_tokens += tokens
+
+    return token_dataset, all_tokens
+
+#val set tokens
+print ("Tokenizing val data")
+val_data_tokens, _ = tokenize_dataset(val_data)
+pkl.dump(val_data_tokens, open(prepath_data + "val_data_tokens.p", "wb"))
+
+#test set tokens
+print ("Tokenizing test data")
+test_data_tokens, _ = tokenize_dataset(test_data)
+pkl.dump(test_data_tokens, open(prepath_data + "test_data_tokens.p", "wb"))
+
+#train set tokens
+print ("Tokenizing train data")
+train_data_tokens, all_train_tokens = tokenize_dataset(train_data)
+pkl.dump(train_data_tokens, open(prepath_data + "train_data_tokens.p", "wb"))
+pkl.dump(all_train_tokens, open(prepath_data + "all_train_tokens.p", "wb"))
