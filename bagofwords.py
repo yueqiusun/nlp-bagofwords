@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from module import Module
 class BagOfWords(nn.Module):
     """
     BagOfWords classification model
