@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from module import Module
+from module import Module as M
 class BagOfWords(nn.Module):
     """
     BagOfWords classification model
@@ -14,7 +14,7 @@ class BagOfWords(nn.Module):
         super(BagOfWords, self).__init__()
         # pay attention to padding_idx 
         self.embed = nn.Embedding(vocab_size, emb_dim, padding_idx=0)
-        self.linear = nn.Linear(emb_dim,20)
+        self.linear = nn.Linear(emb_dim,2)
     
     def forward(self, data, length):
         """

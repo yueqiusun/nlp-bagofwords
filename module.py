@@ -1,11 +1,17 @@
-
-
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 from collections import Counter
+from hyperparameter import Hyperparameter as hp
 
 class Module():
+
+    def token2index_dataset(tokens_data, token2id):
+        indices_data = []
+        for tokens in tokens_data:
+            index_list = [token2id[token] if token in token2id else hp.UNK_IDX for token in tokens]
+            indices_data.append(index_list)
+        return indices_data
 
     def build_vocab(all_tokens, max_vocab_size):
         # Returns:
@@ -22,7 +28,7 @@ class Module():
 
     
 
-    def newsgroup_collate_func(batch):
+    def movies_collate_func(batch):
         """
         Customized function for DataLoader that dynamically pads the batch so that all 
         data have the same length
@@ -31,7 +37,7 @@ class Module():
         label_list = []
         length_list = []
         #print("collate batch: ", batch[0][0])
-        #batch[0][0] = batch[0][0][:MAX_SENTENCE_LENGTH]
+        #batch[0][0] = batch[0][0][:hp.MAX_SENTENCE_LENGTH]
         for datum in batch:
             label_list.append(datum[2])
             length_list.append(datum[1])

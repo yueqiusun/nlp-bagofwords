@@ -2,6 +2,7 @@ import re
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize   
 from hyperparameter import Hyperparameter as hp
+from module import Module as M
 
   
 def remove_stopwords(l):
@@ -10,16 +11,23 @@ def remove_stopwords(l):
 	filtered_sentence = [w for w in l_s if not w in stop_words] 
 	return filtered_sentence
 
-def prep_data(r, if_rs = False):
+def prep_data(r, if_rp = False, if_rb = False, if_l = False, if_rs = False):
+	#replace punctuations with space
 	REPLACE_NO_SPACE = re.compile("(\.)|(\;)|(\:)|(\!)|(\')|(\?)|(\,)|(\")|(\()|(\))|(\[)|(\])")
+	#replace line break with space
 	REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")
-	r1 = [REPLACE_NO_SPACE.sub("", line.lower()) for line in r]
-	r2 = [REPLACE_WITH_SPACE.sub(" ", line) for line in r1]
+	#lower case
+	if if_rp:
+		r = [REPLACE_NO_SPACE.sub("", line) for line in r]
+	if if_rb:
+		r = [REPLACE_WITH_SPACE.sub(" ", line) for line in r]
+	if if_l:
+		r = [line.lower() for line in r]
 	if if_rs:
-		r3 = [remove_stopwords(line) for line in r2]
+		r = [remove_stopwords(line) for line in r]
 	else:
-		r3 = [line.split(' ') for line in r2]
-	output = r3
+		r = [line.split(' ') for line in r]
+	output = r
 	return output
 
 def word_grams(sent, min=1, max=4):
@@ -31,7 +39,7 @@ def word_grams(sent, min=1, max=4):
 	return s
 
 #output list of list of words
-def read_data(filename_p, filename_n, count = 9999999):
+def read_data(filename_p, filename_n, count = 9999999,if_rp = False, if_rb = False, if_l = False, if_rs = False):
 	x = []
 	y = []
 	raw_data_p = []
@@ -53,8 +61,8 @@ def read_data(filename_p, filename_n, count = 9999999):
 			raw_data_n.append(line_n)
 			line_n = f.readline()
 			
-	x = x + prep_data(raw_data_p)
-	x = x + prep_data(raw_data_n)
+	x = x + prep_data(raw_data_p, if_rp = if_rp, if_rb = if_rb, if_l = if_l, if_rs = if_rs)
+	x = x + prep_data(raw_data_n, if_rp = if_rp, if_rb = if_rb, if_l = if_l, if_rs = if_rs)
 	y = y + [1] * line_num_p
 	y = y + [0] * line_num_n
 	return x, y
