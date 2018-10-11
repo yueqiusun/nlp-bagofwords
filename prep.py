@@ -16,13 +16,16 @@ def prep_data(r, if_rp = False, if_rb = False, if_l = False, if_rs = False):
 	REPLACE_NO_SPACE = re.compile("(\.)|(\;)|(\:)|(\!)|(\')|(\?)|(\,)|(\")|(\()|(\))|(\[)|(\])")
 	#replace line break with space
 	REPLACE_WITH_SPACE = re.compile("(<br\s*/><br\s*/>)|(\-)|(\/)")
-	#lower case
+	#replace punctuations with space
 	if if_rp:
 		r = [REPLACE_NO_SPACE.sub("", line) for line in r]
+	#replace line break with space
 	if if_rb:
 		r = [REPLACE_WITH_SPACE.sub(" ", line) for line in r]
+	#lowercase
 	if if_l:
 		r = [line.lower() for line in r]
+	#remove stopwords
 	if if_rs:
 		r = [remove_stopwords(line) for line in r]
 	else:
@@ -70,6 +73,7 @@ def read_data(filename_p, filename_n, count = 9999999,if_rp = False, if_rb = Fal
 import nltk
 from nltk.util import ngrams
 
+# output n-grams, n=max-1
 def word_grams(sent, min=1, max=5):
 	s = []
 	for n in range(min, max):
